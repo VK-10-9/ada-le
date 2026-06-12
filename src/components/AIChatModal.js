@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { XIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
 
 export default function AIChatModal() {
   const [open, setOpen] = useState(false);
@@ -49,7 +48,9 @@ export default function AIChatModal() {
             <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-medium">AI Lab Assistant</h2>
               <button onClick={() => setOpen(false)} className="text-gray-500 hover:text-gray-700">
-                <XIcon className="h-5 w-5" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clipRule="evenodd" />
+                </svg>
               </button>
             </div>
             <div className="flex-1 p-4 overflow-y-auto space-y-3">
@@ -77,7 +78,9 @@ export default function AIChatModal() {
                 disabled={loading}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-md p-2 disabled:opacity-50"
               >
-                <PaperAirplaneIcon className="h-5 w-5" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                </svg>
               </button>
             </div>
           </div>
