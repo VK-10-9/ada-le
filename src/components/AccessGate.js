@@ -16,8 +16,8 @@ const GREETINGS = {
   among: "Sus entry detected 🟥 Welcome Among!",
   joel: "Hey Joel! Code awaits 💻",
   raheel: "Welcome Raheel! Let's debug the world 🛠️",
-  disha: "Hey Disha! Let's explore algorithms 🌟",
-  bhumika: "Welcome Bhumika! Ready to learn? 🎯",
+  disha: "Hey Disha! Let's explore Tubelight"
+  bhumika: "Welcome Bhumika! Ready to learn lizards"
   shashank: "Hey Shashank! Let's get started 🚀",
 };
 
@@ -51,7 +51,7 @@ export default function AccessGate({ children }) {
       localStorage.setItem("ada_user", name.trim());
       setPhase("granted");
     } else {
-      setError("Name not on the list. Ask VK for access! 🔒");
+      setError("bhag bsdk 🤡");
       setShake(true);
       setTimeout(() => setShake(false), 600);
     }
