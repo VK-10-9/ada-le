@@ -1,5 +1,6 @@
 import "./globals.css";
 import AIChatModal from "@/components/AIChatModal";
+import AccessGate from "@/components/AccessGate";
 
 export const metadata = {
   title: "Interactive ADA Lab Companion — Visualizer & Walkthroughs",
@@ -10,8 +11,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" data-theme="dark">
       <body>
-        {children}
-        <AIChatModal />
+        <AccessGate>
+          {children}
+          <AIChatModal />
+        </AccessGate>
       </body>
     </html>
   );
