@@ -1,4 +1,5 @@
 import "./globals.css";
+import AIChatModal from "@/components/AIChatModal";
 
 export const metadata = {
   title: "Interactive ADA Lab Companion — Visualizer & Walkthroughs",
@@ -10,6 +11,7 @@ export default function RootLayout({ children }) {
     <html lang="en" data-theme="dark">
       <body>
         {children}
+        <AIChatModal />
       </body>
     </html>
   );
