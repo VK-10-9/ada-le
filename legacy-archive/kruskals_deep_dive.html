@@ -1,0 +1,162 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.sec{margin-bottom:2rem}
+.sec-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+.code-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.code-line{display:flex;gap:0;cursor:pointer;transition:background .1s}
+.code-line:hover{background:var(--color-background-tertiary)}
+.code-line.active{background:var(--color-background-info)}
+.ln{min-width:36px;text-align:right;padding:3px 10px 3px 0;font-size:12px;font-family:var(--font-mono);color:var(--color-text-tertiary);user-select:none;border-right:0.5px solid var(--color-border-tertiary)}
+.code-line.active .ln{color:var(--color-text-info)}
+.ct{padding:3px 12px;font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary);white-space:pre}
+.explain-box{margin-top:.75rem;padding:.75rem 1rem;background:var(--color-background-info);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-info);line-height:1.6;display:none}
+.explain-box.show{display:block}
+.hint{font-size:12px;color:var(--color-text-tertiary);margin-bottom:.5rem}
+.dry-step{display:flex;gap:12px;padding:.6rem .75rem;border-radius:var(--border-radius-md);margin-bottom:6px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.dry-step.picked{background:var(--color-background-success);border-color:var(--color-border-success)}
+.dry-step.skipped{background:var(--color-background-danger);border-color:var(--color-border-danger)}
+.ds-edge{font-size:13px;font-family:var(--font-mono);font-weight:500;min-width:90px;color:var(--color-text-primary)}
+.dry-step.picked .ds-edge,.dry-step.picked .ds-why{color:var(--color-text-success)}
+.dry-step.skipped .ds-edge,.dry-step.skipped .ds-why{color:var(--color-text-danger)}
+.ds-why{font-size:12px;color:var(--color-text-secondary)}
+.badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:20px;font-weight:500}
+.b-green{background:var(--color-background-success);color:var(--color-text-success)}
+.b-red{background:var(--color-background-danger);color:var(--color-text-danger)}
+.uf-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.uf-cell{padding:4px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);font-size:12px;font-family:var(--font-mono);background:var(--color-background-secondary);color:var(--color-text-primary)}
+</style>
+
+<h2 class="sr-only">Kruskal's algorithm — full line-by-line code explanation with dry run</h2>
+
+<div style="padding:1rem 0">
+
+<div class="sec">
+  <div class="sec-title">Core idea in one line</div>
+  <div style="font-size:14px;color:var(--color-text-primary);line-height:1.6;padding:.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">
+    Sort all edges by weight → greedily pick cheapest → skip if it creates a cycle → stop at V−1 edges. Use Union-Find to detect cycles in O(1).
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Code — click any line to understand it</div>
+  <div class="hint">Tap a line → explanation appears below</div>
+  <div class="code-block" id="codeblock"></div>
+  <div class="explain-box" id="explain"></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Union-Find — how cycle detection works</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:.75rem">Each node starts as its own parent. <code style="font-size:12px">find(x)</code> climbs to the root. <code style="font-size:12px">unite(x,y)</code> merges two trees. If <code style="font-size:12px">find(u) == find(v)</code> → same set → cycle!</div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">Initial parent[] (each node = own parent):</div>
+  <div class="uf-row">
+    <div class="uf-cell">parent[0]=0</div>
+    <div class="uf-cell">parent[1]=1</div>
+    <div class="uf-cell">parent[2]=2</div>
+    <div class="uf-cell">parent[3]=3</div>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">After unite(2,3) — pick edge 2--3:</div>
+  <div class="uf-row">
+    <div class="uf-cell">parent[0]=0</div>
+    <div class="uf-cell">parent[1]=1</div>
+    <div class="uf-cell">parent[2]=3</div>
+    <div class="uf-cell">parent[3]=3</div>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">After unite(0,3) — pick edge 0--3:</div>
+  <div class="uf-row">
+    <div class="uf-cell">parent[0]=3</div>
+    <div class="uf-cell">parent[1]=1</div>
+    <div class="uf-cell">parent[2]=3</div>
+    <div class="uf-cell">parent[3]=3</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Dry run — sample graph (4 vertices)</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:.75rem">Edges: 0-1 wt10, 0-3 wt5, 1-3 wt15, 2-3 wt4. After sorting by weight:</div>
+  <div id="dryrun"></div>
+  <div style="margin-top:10px;padding:.6rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-primary)">
+    MST cost = 4 + 5 + 10 = <strong>19</strong> &nbsp;|&nbsp; Edges picked = 3 = V−1 ✓
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Key things examiner will ask</div>
+  <div style="display:grid;gap:8px">
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)"><span style="font-weight:500">Why qsort?</span> — We need edges sorted by weight. qsort uses comparator function that returns difference of weights.</div>
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)"><span style="font-weight:500">Why path compression in find()?</span> — Without it, find() is O(n). With it, nearly O(1). Makes Union-Find efficient.</div>
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)"><span style="font-weight:500">Time complexity?</span> — O(E log E) for sorting. Union-Find is O(α(V)) ≈ O(1). Total: <strong>O(E log E)</strong>.</div>
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)"><span style="font-weight:500">When to stop?</span> — When V−1 edges are picked. The loop runs over all E edges but exits implicitly after enough picks.</div>
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)"><span style="font-weight:500">Kruskal vs Prim?</span> — Kruskal works on edges (good for sparse graphs). Prim works on vertices via adjacency matrix (good for dense graphs).</div>
+  </div>
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button onclick="sendPrompt('Give me a different dry run example for Kruskal with 5 vertices')">New dry run example ↗</button>
+  <button onclick="sendPrompt('Now decode Lab 2 Prim\\'s algorithm line by line')">Next: Lab 2 — Prim's ↗</button>
+</div>
+
+</div>
+
+<script>
+const lines = [
+  {c:'struct Edge { int src, dest, weight; };', e:'Defines a struct to hold one edge — src (from), dest (to), weight. We store all E edges in an array of this struct.'},
+  {c:'int parent[100];', e:'Global array for Union-Find. parent[i] stores the "representative" (root) of the set that vertex i belongs to.'},
+  {c:'int find(int i) {', e:'find(i) returns the ROOT of the set containing vertex i. If parent[i] == i, it IS the root.'},
+  {c:'  if (parent[i] != i)', e:'If this vertex is NOT its own parent, it has a parent above it — keep climbing.'},
+  {c:'    parent[i] = find(parent[i]);', e:'PATH COMPRESSION: instead of just returning the root, we directly attach i to the root. This flattens the tree, making future find() calls O(1).'},
+  {c:'  return parent[i];', e:'Return the root of i\'s set. After path compression, parent[i] IS the root.'},
+  {c:'}', e:''},
+  {c:'void unite(int x, int y) {', e:'Merges the sets of x and y. Called after we decide to include an edge.'},
+  {c:'  parent[find(x)] = find(y);', e:'find(x) gives root of x\'s set, find(y) gives root of y\'s set. We make x\'s root point to y\'s root → now one merged set.'},
+  {c:'}', e:''},
+  {c:'int compare(const void *a, const void *b) {', e:'Comparator for qsort. Takes two void pointers (generic), casts them to Edge pointers.'},
+  {c:'  return ((struct Edge*)a)->weight - ((struct Edge*)b)->weight;', e:'Returns negative if a < b, 0 if equal, positive if a > b. qsort uses this to sort edges in ASCENDING order of weight.'},
+  {c:'}', e:''},
+  {c:'qsort(edges, E, sizeof(edges[0]), compare);', e:'Sorts the entire edges[] array. Args: array, count, element size, comparator. After this, edges[0] has minimum weight.'},
+  {c:'for (int i = 0; i < V; i++) parent[i] = i;', e:'Initialize Union-Find: every vertex is its own parent (its own set). This is the "no connections yet" state.'},
+  {c:'for (int i = 0; i < E; i++) {', e:'Loop through ALL edges (already sorted by weight). We greedily try each one.'},
+  {c:'  int u = edges[i].src, v = edges[i].dest;', e:'Extract the two endpoints of this edge.'},
+  {c:'  if (find(u) != find(v)) {', e:'CYCLE CHECK: if u and v are in DIFFERENT sets → no cycle → safe to include this edge.'},
+  {c:'    printf(...); minCost += edges[i].weight;', e:'Include this edge in the MST. Print it and add its weight to total cost.'},
+  {c:'    unite(u, v);', e:'Merge the two sets. Now u and v (and all their connected vertices) are in the same set.'},
+  {c:'  }', e:'If find(u) == find(v), they\'re already connected → adding this edge would create a CYCLE → skip it silently.'},
+];
+
+const cb = document.getElementById('codeblock');
+const ex = document.getElementById('explain');
+let activeIdx = -1;
+
+lines.forEach((l,i)=>{
+  if(!l.c) return;
+  const row = document.createElement('div');
+  row.className = 'code-line';
+  row.innerHTML = `<span class="ln">${i+1}</span><span class="ct">${l.c.replace(/</g,'&lt;')}</span>`;
+  if(l.e){
+    row.onclick = ()=>{
+      document.querySelectorAll('.code-line').forEach(r=>r.classList.remove('active'));
+      if(activeIdx===i){activeIdx=-1;ex.classList.remove('show');ex.textContent='';return;}
+      activeIdx=i;
+      row.classList.add('active');
+      ex.textContent = l.e;
+      ex.classList.add('show');
+    };
+  }
+  cb.appendChild(row);
+});
+
+const dryRun = [
+  {edge:'2 -- 3',wt:4,status:'picked',why:'Smallest edge. find(2)=2, find(3)=3 → different sets → include. unite(2,3).'},
+  {edge:'0 -- 3',wt:5,status:'picked',why:'find(0)=0, find(3)=3 → different → include. unite(0,3). Now 0,2,3 connected.'},
+  {edge:'0 -- 1',wt:10,status:'picked',why:'find(0)=3, find(1)=1 → different → include. unite(0,1). V−1=3 edges done!'},
+  {edge:'1 -- 3',wt:15,status:'skipped',why:'find(1)=3, find(3)=3 → SAME set → would create cycle → skip.'},
+];
+
+const dr = document.getElementById('dryrun');
+dryRun.forEach(d=>{
+  const div = document.createElement('div');
+  div.className = `dry-step ${d.status}`;
+  div.innerHTML = `<span class="ds-edge">${d.edge} (wt ${d.wt})</span><span class="badge ${d.status==='picked'?'b-green':'b-red'}">${d.status}</span><span class="ds-why" style="margin-left:4px">${d.why}</span>`;
+  dr.appendChild(div);
+});
+</script>

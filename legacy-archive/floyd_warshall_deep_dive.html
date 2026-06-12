@@ -1,0 +1,233 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.sec{margin-bottom:2rem}
+.sec-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+.tabs{display:flex;gap:0;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;margin-bottom:1.5rem;width:fit-content}
+.tab{padding:6px 20px;font-size:13px;cursor:pointer;background:var(--color-background-secondary);color:var(--color-text-secondary);border:none;transition:all .15s}
+.tab.active{background:var(--color-background-primary);color:var(--color-text-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.code-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.code-line{display:flex;cursor:pointer;transition:background .1s}
+.code-line:hover{background:var(--color-background-tertiary)}
+.code-line.active{background:var(--color-background-info)}
+.ln{min-width:36px;text-align:right;padding:3px 10px 3px 0;font-size:12px;font-family:var(--font-mono);color:var(--color-text-tertiary);user-select:none;border-right:0.5px solid var(--color-border-tertiary)}
+.code-line.active .ln{color:var(--color-text-info)}
+.ct{padding:3px 12px;font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary);white-space:pre}
+.explain-box{margin-top:.75rem;padding:.75rem 1rem;background:var(--color-background-info);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-info);line-height:1.6;display:none}
+.explain-box.show{display:block}
+.hint{font-size:12px;color:var(--color-text-tertiary);margin-bottom:.5rem}
+.mat-wrap{overflow-x:auto;margin-bottom:.5rem}
+table.mat{border-collapse:collapse;font-size:12px;font-family:var(--font-mono)}
+table.mat td{padding:5px 12px;border:0.5px solid var(--color-border-tertiary);text-align:center;color:var(--color-text-primary)}
+table.mat td.hdr{color:var(--color-text-secondary);font-weight:500;background:var(--color-background-secondary)}
+table.mat td.inf{color:var(--color-text-tertiary)}
+table.mat td.hi{background:var(--color-background-success);color:var(--color-text-success);font-weight:500}
+.viva-item{padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary);margin-bottom:8px}
+.diff-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.diff-card{padding:.75rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px}
+.diff-card .label{font-weight:500;color:var(--color-text-primary);margin-bottom:6px;font-size:14px}
+.diff-card .detail{color:var(--color-text-secondary);line-height:1.6}
+</style>
+
+<h2 class="sr-only">Floyd's and Warshall's algorithms — full line-by-line explanation with dry runs</h2>
+
+<div style="padding:1rem 0">
+
+<div class="sec">
+  <div class="sec-title">The key insight — same skeleton, different operation</div>
+  <div class="diff-row">
+    <div class="diff-card">
+      <div class="label">Floyd's — Lab 3a</div>
+      <div class="detail">Finds <strong>shortest distances</strong> between all pairs. Uses <code>min(dist[i][j], dist[i][k]+dist[k][j])</code>. Output: distance matrix.</div>
+    </div>
+    <div class="diff-card">
+      <div class="label">Warshall's — Lab 3b</div>
+      <div class="detail">Finds <strong>reachability</strong> between all pairs. Uses <code>g[i][j] || (g[i][k] && g[k][j])</code>. Output: 0/1 matrix.</div>
+    </div>
+  </div>
+  <div style="padding:.6rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-secondary)">
+    Both use the <strong>same triple nested loop</strong>: for k → for i → for j. Time: O(n³). Space: O(n²). The only difference is the update formula inside.
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('floyd')">Lab 3a — Floyd's</button>
+  <button class="tab" onclick="switchTab('warshall')">Lab 3b — Warshall's</button>
+</div>
+
+<!-- FLOYD PANEL -->
+<div class="panel active" id="panel-floyd">
+
+  <div class="sec">
+    <div class="sec-title">Code — tap any line</div>
+    <div class="hint">Tap a line → explanation below</div>
+    <div class="code-block" id="cb-floyd"></div>
+    <div class="explain-box" id="ex-floyd"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Dry run — 4 vertices</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:.75rem">Input matrix (INF = no direct edge, 0 = self):</div>
+    <div class="mat-wrap">
+    <table class="mat">
+      <tr><td class="hdr"></td><td class="hdr">0</td><td class="hdr">1</td><td class="hdr">2</td><td class="hdr">3</td></tr>
+      <tr><td class="hdr">0</td><td>0</td><td>3</td><td class="inf">∞</td><td>7</td></tr>
+      <tr><td class="hdr">1</td><td class="inf">∞</td><td>0</td><td>2</td><td class="inf">∞</td></tr>
+      <tr><td class="hdr">2</td><td class="inf">∞</td><td class="inf">∞</td><td>0</td><td>1</td></tr>
+      <tr><td class="hdr">3</td><td>2</td><td class="inf">∞</td><td class="inf">∞</td><td>0</td></tr>
+    </table>
+    </div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin:.75rem 0 .5rem">After all k iterations — final shortest path matrix:</div>
+    <div class="mat-wrap">
+    <table class="mat">
+      <tr><td class="hdr"></td><td class="hdr">0</td><td class="hdr">1</td><td class="hdr">2</td><td class="hdr">3</td></tr>
+      <tr><td class="hdr">0</td><td>0</td><td>3</td><td>5</td><td>6</td></tr>
+      <tr><td class="hdr">1</td><td class="hi">5</td><td>0</td><td>2</td><td>3</td></tr>
+      <tr><td class="hdr">2</td><td class="hi">3</td><td class="hi">6</td><td>0</td><td>1</td></tr>
+      <tr><td class="hdr">3</td><td>2</td><td class="hi">5</td><td class="hi">7</td><td>0</td></tr>
+    </table>
+    </div>
+    <div style="font-size:12px;color:var(--color-text-secondary);margin-top:6px">Green cells = distances updated via intermediate vertices (were ∞ in input, now have a path).</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">How k=0 works — example trace</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.7">
+      k=0 means: "Can we go through vertex 0 to get a shorter path?"<br>
+      Check dist[1][3]: currently ∞. Via 0: dist[1][0] + dist[0][3] = ∞ → no update.<br>
+      Check dist[3][1]: currently ∞. Via 0: dist[3][0] + dist[0][1] = 2 + 3 = <strong>5</strong> → update!<br>
+      This continues for all k from 0 to n−1.
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Viva questions</div>
+    <div class="viva-item"><span style="font-weight:500">Why k is the outermost loop?</span> — When considering k as intermediate, dist[i][k] and dist[k][j] must already be finalized. Outer k ensures all shorter paths via 0..k−1 are already computed before trying k.</div>
+    <div class="viva-item"><span style="font-weight:500">Does it work with negative weights?</span> — Yes, but NOT with negative cycles. If dist[i][i] becomes negative after running, there's a negative cycle.</div>
+    <div class="viva-item"><span style="font-weight:500">Time/Space complexity?</span> — Time: <strong>O(n³)</strong>. Space: <strong>O(n²)</strong> for the matrix.</div>
+    <div class="viva-item"><span style="font-weight:500">What's in dist[i][i] at start?</span> — 0. Distance from a vertex to itself is always 0.</div>
+  </div>
+</div>
+
+<!-- WARSHALL PANEL -->
+<div class="panel" id="panel-warshall">
+
+  <div class="sec">
+    <div class="sec-title">Code — tap any line</div>
+    <div class="hint">Tap a line → explanation below</div>
+    <div class="code-block" id="cb-warshall"></div>
+    <div class="explain-box" id="ex-warshall"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Dry run — 4 vertices (DAG)</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:.75rem">Input adjacency matrix (1 = direct edge, 0 = none):</div>
+    <div class="mat-wrap">
+    <table class="mat">
+      <tr><td class="hdr"></td><td class="hdr">0</td><td class="hdr">1</td><td class="hdr">2</td><td class="hdr">3</td></tr>
+      <tr><td class="hdr">0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+      <tr><td class="hdr">1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+      <tr><td class="hdr">2</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+      <tr><td class="hdr">3</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+    </table>
+    </div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin:.75rem 0 .5rem">After all k iterations — transitive closure:</div>
+    <div class="mat-wrap">
+    <table class="mat">
+      <tr><td class="hdr"></td><td class="hdr">0</td><td class="hdr">1</td><td class="hdr">2</td><td class="hdr">3</td></tr>
+      <tr><td class="hdr">0</td><td>0</td><td>1</td><td class="hi">1</td><td class="hi">1</td></tr>
+      <tr><td class="hdr">1</td><td>0</td><td>0</td><td>1</td><td class="hi">1</td></tr>
+      <tr><td class="hdr">2</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+      <tr><td class="hdr">3</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+    </table>
+    </div>
+    <div style="font-size:12px;color:var(--color-text-secondary);margin-top:6px">Green cells = reachability discovered via intermediate vertices. E.g. 0 can reach 2 (via 1) and 3 (via 1→2).</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">How the OR/AND formula works</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.7">
+      <code style="font-size:12px">g[i][j] = g[i][j] || (g[i][k] && g[k][j])</code><br><br>
+      In English: "Can i reach j directly, OR can i reach k AND k reach j?"<br>
+      If either is true → set g[i][j] = 1 (reachable).<br>
+      Example (k=1): g[0][2] = g[0][2] || (g[0][1] && g[1][2]) = 0 || (1 && 1) = <strong>1</strong> ✓
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Viva questions</div>
+    <div class="viva-item"><span style="font-weight:500">Floyd vs Warshall — exact difference?</span> — Floyd finds shortest DISTANCES (actual weights). Warshall finds REACHABILITY (yes/no). Floyd uses min/+, Warshall uses OR/AND.</div>
+    <div class="viva-item"><span style="font-weight:500">What does g[i][j]=1 mean?</span> — There exists at least one path from vertex i to vertex j (of any length). It does NOT give you the path or its cost.</div>
+    <div class="viva-item"><span style="font-weight:500">Input for Warshall?</span> — Simple adjacency matrix (0/1). No weights needed. No INF handling needed.</div>
+    <div class="viva-item"><span style="font-weight:500">Time complexity?</span> — <strong>O(n³)</strong> same as Floyd. Three nested loops.</div>
+  </div>
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:1rem">
+  <button onclick="sendPrompt('Give me a fresh dry run for Floyd\\'s with 3 vertices, show each k step')">Floyd dry run step-by-step ↗</button>
+  <button onclick="sendPrompt('Now decode Lab 4 Dijkstra\\'s algorithm line by line with full depth')">Next: Lab 4 — Dijkstra's ↗</button>
+</div>
+
+</div>
+
+<script>
+const floydLines = [
+  {c:'int n, dist[10][10];', e:'n = number of vertices. dist[][] stores the shortest path distances. Size 10×10 — enough for lab inputs.'},
+  {c:'printf("Enter the cost matrix (use %d for infinity):\\n", INF);', e:'User must manually enter INF (99999) where there\'s no direct edge. Unlike Prim\'s, Floyd doesn\'t auto-convert 0 to INF.'},
+  {c:'for (int i=0; i<n; i++)', e:'Read matrix row by row. Whatever user types goes directly into dist[][]. No conversion here.'},
+  {c:'  for (int j=0; j<n; j++)', e:'Read each cell. dist[i][i] = 0 (user enters 0 for self). dist[i][j] = INF if no direct edge.'},
+  {c:'    scanf("%d", &dist[i][j]);', e:'Store the value as-is. The input already has 0s for self and 99999 for no-edge.'},
+  {c:'for (int k=0; k<n; k++)', e:'OUTERMOST LOOP — k is the intermediate vertex being "tried". We ask: does going THROUGH k shorten any path? Must be outermost so all i→k and k→j paths are settled.'},
+  {c:'  for (int i=0; i<n; i++)', e:'i = source vertex of the pair we\'re checking.'},
+  {c:'    for (int j=0; j<n; j++)', e:'j = destination vertex. We check every (i,j) pair for every intermediate k.'},
+  {c:'      if (dist[i][k]+dist[k][j] < dist[i][j])', e:'CORE CHECK: Is the path i→k→j shorter than the current known path i→j? If yes, update. This is the DP recurrence.'},
+  {c:'        dist[i][j] = dist[i][k]+dist[k][j];', e:'Update: the new shorter path goes via k. After all k iterations, dist[i][j] holds the true shortest path.'},
+  {c:'dist[i][j]==INF ? printf("INF ") : printf("%d ", dist[i][j])', e:'Print INF for unreachable pairs (still 99999 after all updates), else print the distance. Ternary operator for clean output.'},
+];
+
+const warshallLines = [
+  {c:'int n, g[10][10];', e:'n = vertices. g[][] is the adjacency matrix — only 0s and 1s. 1 = direct edge exists, 0 = no direct edge.'},
+  {c:'printf("Enter the adjacency matrix:\\n");', e:'User enters 0/1 matrix. No weights, no INF. Just direct connectivity.'},
+  {c:'for (int i=0; i<n; i++)', e:'Read matrix row by row.'},
+  {c:'  for (int j=0; j<n; j++)', e:'Read each cell as 0 or 1.'},
+  {c:'    scanf("%d", &g[i][j]);', e:'Store directly. g[i][j]=1 means edge i→j exists. g[i][j]=0 means no direct edge.'},
+  {c:'for (int k=0; k<n; k++)', e:'Outermost loop — k is the intermediate vertex. "Can we route through k to find new reachability?"'},
+  {c:'  for (int i=0; i<n; i++)', e:'i = source vertex.'},
+  {c:'    for (int j=0; j<n; j++)', e:'j = destination. Check all pairs (i,j).'},
+  {c:'      g[i][j] = g[i][j] || (g[i][k] && g[k][j]);', e:'THE KEY LINE: i can reach j if — it could already (g[i][j]) OR it can reach k AND k can reach j. OR/AND replaces min/+ from Floyd. Updates g[i][j] to 1 if any path exists.'},
+  {c:'printf("%d ", g[i][j]);', e:'Print 1 (reachable) or 0 (not reachable). This is the transitive closure matrix.'},
+];
+
+function buildCode(lines, cbId, exId) {
+  const cb = document.getElementById(cbId);
+  const ex = document.getElementById(exId);
+  let activeIdx = -1;
+  lines.forEach((l,i) => {
+    if(!l.c.trim()) return;
+    const row = document.createElement('div');
+    row.className = 'code-line';
+    row.innerHTML = `<span class="ln">${i+1}</span><span class="ct">${l.c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+    if(l.e){
+      row.onclick = () => {
+        document.querySelectorAll(`#${cbId} .code-line`).forEach(r=>r.classList.remove('active'));
+        if(activeIdx===i){activeIdx=-1;ex.classList.remove('show');ex.textContent='';return;}
+        activeIdx=i;
+        row.classList.add('active');
+        ex.textContent=l.e;
+        ex.classList.add('show');
+      };
+    }
+    cb.appendChild(row);
+  });
+}
+
+buildCode(floydLines, 'cb-floyd', 'ex-floyd');
+buildCode(warshallLines, 'cb-warshall', 'ex-warshall');
+
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((tb,i) => tb.classList.toggle('active', (i===0&&t==='floyd')||(i===1&&t==='warshall')));
+  document.getElementById('panel-floyd').classList.toggle('active', t==='floyd');
+  document.getElementById('panel-warshall').classList.toggle('active', t==='warshall');
+}
+</script>

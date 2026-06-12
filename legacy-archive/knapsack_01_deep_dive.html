@@ -1,0 +1,179 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.sec{margin-bottom:2rem}
+.sec-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+.code-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.code-line{display:flex;cursor:pointer;transition:background .1s}
+.code-line:hover{background:var(--color-background-tertiary)}
+.code-line.active{background:var(--color-background-info)}
+.ln{min-width:36px;text-align:right;padding:3px 10px 3px 0;font-size:12px;font-family:var(--font-mono);color:var(--color-text-tertiary);user-select:none;border-right:0.5px solid var(--color-border-tertiary)}
+.code-line.active .ln{color:var(--color-text-info)}
+.ct{padding:3px 12px;font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary);white-space:pre}
+.explain-box{margin-top:.75rem;padding:.75rem 1rem;background:var(--color-background-info);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-info);line-height:1.6;display:none}
+.explain-box.show{display:block}
+.hint{font-size:12px;color:var(--color-text-tertiary);margin-bottom:.5rem}
+.mat-wrap{overflow-x:auto;margin-bottom:.5rem}
+table.mat{border-collapse:collapse;font-size:12px;font-family:var(--font-mono)}
+table.mat td{padding:5px 10px;border:0.5px solid var(--color-border-tertiary);text-align:center;color:var(--color-text-primary);min-width:32px}
+table.mat td.hdr{color:var(--color-text-secondary);font-weight:500;background:var(--color-background-secondary)}
+table.mat td.zero{color:var(--color-text-tertiary)}
+table.mat td.hi{background:var(--color-background-success);color:var(--color-text-success);font-weight:500}
+table.mat td.ans{background:var(--color-background-warning);color:var(--color-text-warning);font-weight:500}
+.viva-item{padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary);margin-bottom:8px}
+.formula-box{padding:.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border-left:3px solid var(--color-border-primary);font-size:13px;color:var(--color-text-primary);line-height:1.8;margin-bottom:1rem}
+.items-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
+.item-card{padding:.5rem .85rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:12px;font-family:var(--font-mono);background:var(--color-background-secondary);color:var(--color-text-primary);line-height:1.7}
+.item-card .item-label{font-size:11px;color:var(--color-text-secondary)}
+</style>
+
+<h2 class="sr-only">0/1 Knapsack using Dynamic Programming — full line-by-line explanation with DP table</h2>
+
+<div style="padding:1rem 0">
+
+<div class="sec">
+  <div class="sec-title">Core idea in one line</div>
+  <div style="font-size:14px;color:var(--color-text-primary);line-height:1.6;padding:.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">
+    Each item is either taken fully (1) or not at all (0) — no fractions. Build a 2D table where knap[i][w] = max value using first i items with capacity w. Answer is at knap[n][W].
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">0/1 vs Fractional Knapsack</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div style="padding:.75rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px">
+      <div style="font-weight:500;margin-bottom:4px">0/1 Knapsack (Lab 6)</div>
+      <div style="color:var(--color-text-secondary);line-height:1.6">Take item fully or skip. No fractions. Uses Dynamic Programming. O(n·W).</div>
+    </div>
+    <div style="padding:.75rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px">
+      <div style="font-weight:500;margin-bottom:4px">Fractional Knapsack (Lab 7)</div>
+      <div style="color:var(--color-text-secondary);line-height:1.6">Can take fraction of item. Uses Greedy (sort by value/weight ratio). O(n log n).</div>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Input — lab values</div>
+  <div class="items-row">
+    <div class="item-card"><div class="item-label">Item 1</div>val=20, wt=25</div>
+    <div class="item-card"><div class="item-label">Item 2</div>val=25, wt=20</div>
+    <div class="item-card"><div class="item-label">Item 3</div>val=40, wt=30</div>
+    <div class="item-card"><div class="item-label">Capacity W</div>W = 50</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">The DP recurrence — burn this in</div>
+  <div class="formula-box">
+    <strong>If wt[i−1] &gt; w:</strong> &nbsp; knap[i][w] = knap[i−1][w] &nbsp; <span style="color:var(--color-text-secondary)">(can't fit item i → skip it)</span><br>
+    <strong>If wt[i−1] ≤ w:</strong> &nbsp; knap[i][w] = max( knap[i−1][w], &nbsp; val[i−1] + knap[i−1][w−wt[i−1]] )<br>
+    <span style="color:var(--color-text-secondary);font-size:12px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↑ skip item i &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↑ take item i (add its value, reduce capacity)</span>
+  </div>
+  <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.6">i−1 in val/wt because arrays are 0-indexed but table rows are 1-indexed. knap[i] = "using first i items". So item i is at index i−1 in the array.</div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Code — tap any line</div>
+  <div class="hint">Tap a line → explanation below</div>
+  <div class="code-block" id="codeblock"></div>
+  <div class="explain-box" id="explain"></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Full DP table — knap[i][w]</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:.5rem">Rows = items (0=none, 1=item1, 2=item2, 3=item3). Cols = capacity 0 to 50 (showing key columns).</div>
+  <div class="mat-wrap">
+  <table class="mat">
+    <tr>
+      <td class="hdr">i\w</td>
+      <td class="hdr">0</td><td class="hdr">10</td><td class="hdr">20</td><td class="hdr">25</td><td class="hdr">30</td><td class="hdr">40</td><td class="hdr">45</td><td class="hdr">50</td>
+    </tr>
+    <tr>
+      <td class="hdr">0 (none)</td>
+      <td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td>
+    </tr>
+    <tr>
+      <td class="hdr">1 (wt25,v20)</td>
+      <td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="hi">20</td><td>20</td><td>20</td><td>20</td><td>20</td>
+    </tr>
+    <tr>
+      <td class="hdr">2 (wt20,v25)</td>
+      <td class="zero">0</td><td class="zero">0</td><td class="hi">25</td><td>25</td><td>25</td><td>25</td><td class="hi">45</td><td>45</td>
+    </tr>
+    <tr>
+      <td class="hdr">3 (wt30,v40)</td>
+      <td class="zero">0</td><td class="zero">0</td><td>25</td><td>25</td><td class="hi">40</td><td>40</td><td>45</td><td class="ans">65</td>
+    </tr>
+  </table>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-top:6px">Green = value changed (item was taken). Orange = final answer knap[3][50] = 65.</div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">How knap[3][50]=65 is reached</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.8;padding:.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md)">
+    At i=3 (item3, wt=30, val=40), w=50:<br>
+    wt[2]=30 ≤ 50 → can take it.<br>
+    Option A — skip item3: knap[2][50] = 45<br>
+    Option B — take item3: val[2] + knap[2][50−30] = 40 + knap[2][20] = 40 + 25 = 65<br>
+    max(45, 65) = <strong>65</strong> ✓ &nbsp; Items taken: item2 (wt20,v25) + item3 (wt30,v40) = wt50, val65.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Viva questions</div>
+  <div class="viva-item"><span style="font-weight:500">Why is the table (n+1)×(W+1)?</span> — Row 0 = "no items" baseline (all zeros). Col 0 = "capacity 0" baseline (all zeros). The +1 handles these base cases cleanly without special-casing.</div>
+  <div class="viva-item"><span style="font-weight:500">Why i−1 when accessing val[] and wt[]?</span> — Table rows are 1-indexed (row i = first i items). Arrays are 0-indexed. So item i in the table = val[i−1] and wt[i−1] in the array.</div>
+  <div class="viva-item"><span style="font-weight:500">Time and space complexity?</span> — Both <strong>O(n·W)</strong>. Table has (n+1)×(W+1) cells, each computed in O(1).</div>
+  <div class="viva-item"><span style="font-weight:500">Why DP and not Greedy here?</span> — Greedy (pick best ratio) doesn't work for 0/1 because you can't take fractions. A greedy pick might waste capacity. DP explores all combinations implicitly via the table.</div>
+  <div class="viva-item"><span style="font-weight:500">What does knap[i][w] represent exactly?</span> — Maximum value achievable using only the first i items with a knapsack of capacity exactly w.</div>
+  <div class="viva-item"><span style="font-weight:500">Is this pseudo-polynomial?</span> — Yes. O(n·W) depends on the value of W, not just the number of inputs. If W is huge, the table explodes.</div>
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button onclick="sendPrompt('Trace the full 0/1 knapsack DP table row by row for the given input, show every cell computation')">Full table trace ↗</button>
+  <button onclick="sendPrompt('Now decode Lab 7 Fractional Knapsack greedy line by line with full depth')">Next: Lab 7 — Fractional Knapsack ↗</button>
+</div>
+
+</div>
+
+<script>
+const lines = [
+  {c:'int max(int a, int b) { return a > b ? a : b; }', e:'Helper function — returns the larger of two values. Used in the DP recurrence to pick between "skip item" and "take item". Ternary operator: if a>b return a, else return b.'},
+  {c:'int knapsack(int W, int wt[], int val[], int n) {', e:'W = total capacity. wt[] = weights of all items. val[] = values of all items. n = number of items. Returns the maximum value achievable.'},
+  {c:'  int knap[n+1][W+1];', e:'The DP table. Size (n+1)×(W+1). Extra row and column for base case: row 0 = no items, col 0 = zero capacity. Both are all zeros.'},
+  {c:'  for (int i=0; i<=n; i++) {', e:'Outer loop: iterate over each item (0 to n). i=0 is the "no items" base case row.'},
+  {c:'    for (int w=0; w<=W; w++) {', e:'Inner loop: iterate over each capacity from 0 to W. w=0 is the "no capacity" base case column.'},
+  {c:'      if (i==0 || w==0)', e:'BASE CASE: if no items (i=0) OR capacity is 0 (w=0) → max value is 0. Nothing to pick, or no room to put anything.'},
+  {c:'        knap[i][w] = 0;', e:'Fill entire first row and first column with 0. This anchors the DP — all other cells build on top of these zeros.'},
+  {c:'      else if (wt[i-1] <= w)', e:'Item i has weight wt[i−1] (0-indexed array). If it FITS in current capacity w → we have a choice: take it or skip it.'},
+  {c:'        knap[i][w] = max(val[i-1] + knap[i-1][w-wt[i-1]],', e:'TAKE option: add val[i−1] (item\'s value) + best value from remaining capacity (w − wt[i−1]) using previous i−1 items. knap[i−1][w−wt[i−1]] is that best value.'},
+  {c:'                         knap[i-1][w]);', e:'SKIP option: don\'t take item i → same capacity w but only first i−1 items → knap[i−1][w]. max() picks whichever option gives more value.'},
+  {c:'      else', e:'Item i does NOT fit (wt[i−1] > w). No choice — must skip it.'},
+  {c:'        knap[i][w] = knap[i-1][w];', e:'Can\'t take item i (too heavy). Carry forward the best value from i−1 items with same capacity. Value doesn\'t improve.'},
+  {c:'  return knap[n][W];', e:'ANSWER: bottom-right cell. knap[n][W] = max value using ALL n items with FULL capacity W. This is what we return.'},
+  {c:'int val[]={20,25,40}; int wt[]={25,20,30}; int W=50, n=3;', e:'Hardcoded lab input. 3 items: (val=20,wt=25), (val=25,wt=20), (val=40,wt=30). Capacity = 50.'},
+  {c:'printf("The solution is : %d", knapsack(W,wt,val,n));', e:'Call knapsack and print result. Expected output: 65 (items 2+3: wt=20+30=50, val=25+40=65).'},
+];
+
+const cb = document.getElementById('codeblock');
+const ex = document.getElementById('explain');
+let activeIdx = -1;
+lines.forEach((l,i)=>{
+  if(!l.c.trim()) return;
+  const row = document.createElement('div');
+  row.className = 'code-line';
+  row.innerHTML = `<span class="ln">${i+1}</span><span class="ct">${l.c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+  if(l.e){
+    row.onclick=()=>{
+      document.querySelectorAll('.code-line').forEach(r=>r.classList.remove('active'));
+      if(activeIdx===i){activeIdx=-1;ex.classList.remove('show');ex.textContent='';return;}
+      activeIdx=i;
+      row.classList.add('active');
+      ex.textContent=l.e;
+      ex.classList.add('show');
+    };
+  }
+  cb.appendChild(row);
+});
+</script>

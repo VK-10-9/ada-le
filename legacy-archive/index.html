@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive ADA Lab Companion — Visualizer & Walkthroughs</title>
+  <meta name="description" content="A premium interactive educational guide for Analysis & Design of Algorithms labs, featuring step-by-step code execution simulators, C line-by-line walkthroughs, and viva prep.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="logo-area">
+        <div class="logo-icon">Ω</div>
+        <div class="logo-text">ADA Companion</div>
+      </div>
+      
+      <div class="search-box-container">
+        <input type="text" id="global-search" class="search-box" placeholder="Search codes, vivas, topics...">
+      </div>
+      
+      <nav class="nav-links">
+        <div class="nav-item">
+          <a class="nav-link active" onclick="switchTab('dashboard')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+            <span>Dashboard</span>
+          </a>
+        </div>
+        
+        <div style="font-size: 11px; text-transform: uppercase; color: var(--text-tertiary); padding: 0.75rem 1rem 0.25rem; font-weight: 600;">Lab Experiments</div>
+        
+        <div class="nav-item">
+          <a class="nav-link" onclick="switchTab('prim')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span>Prim's Algorithm</span>
+            <span class="nav-link-badge">Lab 2</span>
+          </a>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" onclick="switchTab('kruskal')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span>Kruskal's Algorithm</span>
+            <span class="nav-link-badge">Lab 2b</span>
+          </a>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" onclick="switchTab('floyd')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+            <span>Floyd's Algorithm</span>
+            <span class="nav-link-badge">Lab 3a</span>
+          </a>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" onclick="switchTab('warshall')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+            <span>Warshall's Algorithm</span>
+            <span class="nav-link-badge">Lab 3b</span>
+          </a>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" onclick="switchTab('dijkstra')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+            <span>Dijkstra's Algorithm</span>
+            <span class="nav-link-badge">Lab 4</span>
+          </a>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" onclick="switchTab('topological_sort')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12M6 8h12M6 13h12M6 18h12"/></svg>
+            <span>Topological Sort</span>
+            <span class="nav-link-badge">Lab 5</span>
+          </a>
+        </div>
+        
+        <div class="nav-item">
+          <a class="nav-link" onclick="switchTab('knapsack')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <span>0/1 Knapsack DP</span>
+            <span class="nav-link-badge">Lab 6</span>
+          </a>
+        </div>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <span style="font-size: 12px; color: var(--text-secondary);">v1.0.0 (Interactive)</span>
+        <button id="theme-btn" class="theme-toggle" onclick="toggleTheme()" title="Switch Light/Dark Theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </aside>
+    
+    <!-- Main Display Section -->
+    <main class="main-content">
+      
+      <!-- Top Navigation Header -->
+      <header class="top-nav">
+        <div class="welcome-msg">
+          <h1 id="main-heading">ADA Lab Companion</h1>
+          <p id="main-subheading">Choose an experiment or view the general lab dashboard.</p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-primary" onclick="openAIDrawer('Help me understand the syllabus')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Syllabus Help
+          </button>
+        </div>
+      </header>
+      
+      <!-- DASHBOARD TAB -->
+      <section id="dashboard-view" class="tab-panel">
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-subtitle">Experiment coverage</div>
+            <h3 class="card-title">6 Interactive Algorithms</h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; margin-top: 0.5rem; line-height: 1.6;">
+              Walk through interactive state steps, C source codes, logic highlights, and real dry runs on custom matrices. Covers labs 2, 3a, 3b, 4, 5, and 6.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-subtitle">Active playground</div>
+            <h3 class="card-title">Matrix & Data Editors</h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; margin-top: 0.5rem; line-height: 1.6;">
+              Edit weight matrices, capacity limits, or items directly in our grid interface. The simulators dynamically recalculate steps and traces in real-time.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card-subtitle">Exams preparation</div>
+            <h3 class="card-title">Interactive Viva Bank</h3>
+            <p style="color: var(--text-secondary); font-size: 0.92rem; margin-top: 0.5rem; line-height: 1.6;">
+              Collapsible cards covering crucial questions examiner lists, path compression mechanics, logic equations, complexities, and cycle-detection explanations.
+            </p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 2rem;">
+          <div class="card-subtitle">Quick Cheat Sheet</div>
+          <h2 class="card-title" style="font-size: 1.3rem; margin-bottom: 1rem;">Core ADA Lab Syllabus & Complexity Summary</h2>
+          <div style="overflow-x: auto;">
+            <table class="matrix-table" style="width: 100%; min-width: 600px;">
+              <thead>
+                <tr>
+                  <td class="hdr">Lab Unit</td>
+                  <td class="hdr">Algorithm Title</td>
+                  <td class="hdr">Design Paradigm</td>
+                  <td class="hdr">Time Complexity</td>
+                  <td class="hdr">Space Complexity</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Lab 2</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-weight: 500; font-size: 0.9rem;">Prim's Algorithm</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Greedy Method</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem; color: var(--warning-accent);">O(V²)</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem;">O(V²)</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Lab 2b</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-weight: 500; font-size: 0.9rem;">Kruskal's Algorithm</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Greedy Method</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem; color: var(--warning-accent);">O(E log E)</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem;">O(V + E)</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Lab 3a</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-weight: 500; font-size: 0.9rem;">Floyd's Algorithm</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Dynamic Programming</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem; color: var(--danger-accent);">O(V³)</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem;">O(V²)</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Lab 3b</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-weight: 500; font-size: 0.9rem;">Warshall's Algorithm</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Dynamic Programming</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem; color: var(--danger-accent);">O(V³)</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem;">O(V²)</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Lab 4</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-weight: 500; font-size: 0.9rem;">Dijkstra's Algorithm</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Greedy Method</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem; color: var(--warning-accent);">O(V²)</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem;">O(V)</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Lab 5</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-weight: 500; font-size: 0.9rem;">Topological Sort (Kahn's)</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Source Removal (BFS)</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem; color: var(--success-accent);">O(V + E)</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem;">O(V)</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Lab 6</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-weight: 500; font-size: 0.9rem;">0/1 Knapsack Problem</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-size: 0.9rem;">Dynamic Programming</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem; color: var(--warning-accent);">O(n · W)</td>
+                  <td style="padding: 10px; border: 1px solid var(--border-primary); font-family: var(--font-mono); font-size: 0.85rem;">O(n · W)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      
+      <!-- DYNAMIC ALGORITHM VIEW SHELL -->
+      <section id="algorithm-view" class="tab-panel" style="display: none;">
+        <div class="lab-container">
+          
+          <!-- LEFT COL: SIMULATOR & DRY RUNS -->
+          <div class="visualizer-section">
+            
+            <!-- Comparison Grid -->
+            <div class="comparison-grid" id="algo-comparison">
+              <!-- Rendered Dynamically -->
+            </div>
+            
+            <!-- Main Workspace Card -->
+            <div class="card workspace-card">
+              <div class="card-subtitle">Simulation Engine</div>
+              <h3 class="card-title" id="algo-title-workspace">Visual Simulator</h3>
+              
+              <!-- Simulation Controls -->
+              <div class="sim-controls">
+                <button class="btn btn-primary" id="btn-play-pause">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <span>Play</span>
+                </button>
+                <button class="btn" id="btn-step-prev">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+                  <span>Prev</span>
+                </button>
+                <button class="btn" id="btn-step-next">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+                  <span>Next</span>
+                </button>
+                <button class="btn" id="btn-reset">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                  <span>Reset</span>
+                </button>
+                
+                <div class="speed-slider-container">
+                  <span>Speed:</span>
+                  <input type="range" class="speed-slider" id="speed-slider" min="300" max="2500" value="1000" step="100">
+                  <span id="speed-label">1.0s</span>
+                </div>
+              </div>
+              
+              <!-- Custom Matrix/Graph/Item Input Editor -->
+              <div id="input-editor-container">
+                <!-- Rendered Dynamically -->
+              </div>
+              
+              <!-- Live State Representation -->
+              <div class="sim-state-panel">
+                <div class="state-title" id="state-panel-title">Active Variables State</div>
+                <div class="state-row" id="sim-state-badges">
+                  <!-- Badges updated by simulator -->
+                </div>
+              </div>
+            </div>
+            
+            <!-- Step trace output timeline -->
+            <div class="card">
+              <div class="card-subtitle">Dry Run Timeline</div>
+              <h3 class="card-title">Action Trace Logs</h3>
+              <div class="steps-container" id="steps-timeline">
+                <!-- Trace step cards -->
+              </div>
+            </div>
+            
+          </div>
+          
+          <!-- RIGHT COL: C CODE WALKTHROUGH & VIVAS -->
+          <div class="visualizer-section">
+            
+            <!-- Code card -->
+            <div class="card code-panel">
+              <div class="card-subtitle">C Implementation Walkthrough</div>
+              <h3 class="card-title" style="margin-bottom: 0.5rem;">Interactive Line Guide</h3>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Tap any line during pause to highlight its explanation.</p>
+              
+              <div class="code-container" id="code-walkthrough-block">
+                <!-- Code lines dynamically built -->
+              </div>
+              <div class="explain-box" id="code-explain-box" style="display: none;">
+                <!-- Detailed explanation -->
+              </div>
+            </div>
+            
+            <!-- Viva Card -->
+            <div class="card">
+              <div class="card-subtitle">Viva Voce Preparation</div>
+              <h3 class="card-title" style="margin-bottom: 1rem;">Frequent Lab Questions</h3>
+              <div class="viva-list" id="viva-questions-list">
+                <!-- Viva list loaded dynamically -->
+              </div>
+            </div>
+            
+          </div>
+          
+        </div>
+      </section>
+      
+    </main>
+    
+  </div>
+  
+  <!-- AI ASSISTANT CHAT DRAWER -->
+  <button class="ai-assistant-toggle" onclick="toggleAIDrawer()" title="Ask ADA AI Assistant">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </button>
+  
+  <div class="ai-drawer" id="ai-drawer">
+    <div class="ai-header">
+      <div class="ai-title">
+        <div class="logo-icon" style="width: 24px; height: 24px; font-size: 0.75rem;">AI</div>
+        <span>ADA Tutor Assistant</span>
+      </div>
+      <button class="close-drawer" onclick="toggleAIDrawer()">&times;</button>
+    </div>
+    
+    <div class="ai-messages" id="ai-messages">
+      <div class="message bot">
+        Hi! I am your ADA Lab Tutor. I can explain code lines, perform custom dry runs, explain exam topics, or help you understand time complexities. Tap one of the suggestions below or type your question!
+      </div>
+    </div>
+    
+    <div class="quick-prompts" id="quick-prompts-area">
+      <!-- Loaded dynamically based on active algorithm -->
+    </div>
+    
+    <div class="ai-input-area">
+      <input type="text" id="ai-input" class="ai-input" placeholder="Ask a question..." onkeydown="handleAISubmit(event)">
+      <button class="btn btn-primary" onclick="submitAIQuestion()" style="padding: 0.75rem;">Send</button>
+    </div>
+  </div>
+
+  <!-- Script files -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

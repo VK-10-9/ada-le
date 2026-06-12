@@ -1,0 +1,160 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.sec{margin-bottom:2rem}
+.sec-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+.code-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.code-line{display:flex;gap:0;cursor:pointer;transition:background .1s}
+.code-line:hover{background:var(--color-background-tertiary)}
+.code-line.active{background:var(--color-background-info)}
+.ln{min-width:36px;text-align:right;padding:3px 10px 3px 0;font-size:12px;font-family:var(--font-mono);color:var(--color-text-tertiary);user-select:none;border-right:0.5px solid var(--color-border-tertiary)}
+.code-line.active .ln{color:var(--color-text-info)}
+.ct{padding:3px 12px;font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary);white-space:pre}
+.explain-box{margin-top:.75rem;padding:.75rem 1rem;background:var(--color-background-info);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-info);line-height:1.6;display:none}
+.explain-box.show{display:block}
+.hint{font-size:12px;color:var(--color-text-tertiary);margin-bottom:.5rem}
+.dry-step{display:flex;flex-wrap:wrap;gap:8px;padding:.6rem .75rem;border-radius:var(--border-radius-md);margin-bottom:6px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);align-items:flex-start}
+.ds-edge{font-size:13px;font-family:var(--font-mono);font-weight:500;min-width:100px;color:var(--color-text-primary)}
+.ds-why{font-size:12px;color:var(--color-text-secondary);flex:1}
+.badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:20px;font-weight:500}
+.b-green{background:var(--color-background-success);color:var(--color-text-success)}
+.mat-wrap{overflow-x:auto}
+table.mat{border-collapse:collapse;font-size:12px;font-family:var(--font-mono)}
+table.mat td{padding:4px 10px;border:0.5px solid var(--color-border-tertiary);text-align:center;color:var(--color-text-primary)}
+table.mat td.hdr{color:var(--color-text-secondary);font-weight:500;background:var(--color-background-secondary)}
+table.mat td.inf{color:var(--color-text-tertiary)}
+</style>
+
+<h2 class="sr-only">Prim's algorithm — full line-by-line code explanation with dry run</h2>
+
+<div style="padding:1rem 0">
+
+<div class="sec">
+  <div class="sec-title">Core idea in one line</div>
+  <div style="font-size:14px;color:var(--color-text-primary);line-height:1.6;padding:.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">
+    Start from vertex 0. Repeatedly pick the cheapest edge that connects the current tree to a new (unvisited) vertex. Input is a cost matrix — 0 means no edge (treated as ∞).
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Kruskal vs Prim — quick diff</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px">
+      <div style="font-weight:500;color:var(--color-text-primary);margin-bottom:4px">Kruskal</div>
+      <div style="color:var(--color-text-secondary)">Works on edges. Sort all edges first. Uses Union-Find. Better for sparse graphs.</div>
+    </div>
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);font-size:13px">
+      <div style="font-weight:500;color:var(--color-text-primary);margin-bottom:4px">Prim</div>
+      <div style="color:var(--color-text-secondary)">Works on vertices. Grows tree from a source. Uses cost matrix. Better for dense graphs.</div>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Input — cost matrix (4 vertices)</div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">0 in input → treated as INF (99999) = no edge. Diagonal = self = no edge.</div>
+  <div class="mat-wrap">
+  <table class="mat">
+    <tr><td class="hdr"></td><td class="hdr">0</td><td class="hdr">1</td><td class="hdr">2</td><td class="hdr">3</td></tr>
+    <tr><td class="hdr">0</td><td class="inf">∞</td><td>10</td><td class="inf">∞</td><td>5</td></tr>
+    <tr><td class="hdr">1</td><td>10</td><td class="inf">∞</td><td class="inf">∞</td><td>15</td></tr>
+    <tr><td class="hdr">2</td><td class="inf">∞</td><td class="inf">∞</td><td class="inf">∞</td><td>4</td></tr>
+    <tr><td class="hdr">3</td><td>5</td><td>15</td><td>4</td><td class="inf">∞</td></tr>
+  </table>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Code — tap any line to understand it</div>
+  <div class="hint">Tap a line → explanation appears below</div>
+  <div class="code-block" id="codeblock"></div>
+  <div class="explain-box" id="explain"></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Dry run — step by step</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:.75rem">Start: visited = {0}. Need 3 more edges (V−1 = 3).</div>
+  <div id="dryrun"></div>
+  <div style="margin-top:10px;padding:.6rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-primary)">
+    MST cost = 5 + 4 + 10 = <strong>19</strong> &nbsp;|&nbsp; Edges picked = 3 = V−1 ✓
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Key things examiner will ask</div>
+  <div style="display:grid;gap:8px">
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)"><span style="font-weight:500">Why two nested loops inside the outer loop?</span> — Outer loop runs V−1 times (pick V−1 edges). Inner double loop scans ALL visited→unvisited pairs to find the minimum cost edge each time.</div>
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)"><span style="font-weight:500">Why initialize cost[i][j] = INF when input is 0?</span> — 0 means no direct edge. If we keep it 0, it would always be picked as minimum, which is wrong.</div>
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)"><span style="font-weight:500">Time complexity?</span> — Three nested loops → <strong>O(V²)</strong>. This is why Prim suits dense graphs (E ≈ V²).</div>
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)"><span style="font-weight:500">What's visited[] for?</span> — Tracks which vertices are already in the MST. We only look at edges from visited→unvisited to avoid re-adding vertices.</div>
+    <div style="padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary)"><span style="font-weight:500">Does Prim guarantee MST?</span> — Yes. Greedy choice property holds — at each step the locally optimal edge is also globally optimal for spanning trees.</div>
+  </div>
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button onclick="sendPrompt('Give me a different dry run for Prim\\'s with 5 vertices')">New dry run ↗</button>
+  <button onclick="sendPrompt('Now decode Lab 3a Floyd\\'s algorithm line by line with full depth')">Next: Lab 3a — Floyd's ↗</button>
+</div>
+
+</div>
+
+<script>
+const lines = [
+  {c:'int n, cost[100][100], visited[100] = {0};', e:'n = number of vertices. cost[][] = adjacency cost matrix (input). visited[] = 0 for all vertices initially — nobody is in the MST yet.'},
+  {c:'int mincost = 0;', e:'Accumulates the total weight of the MST. We add each picked edge\'s weight to this.'},
+  {c:'scanf("%d", &n);', e:'Read number of vertices. Prim works on V vertices, not edges — so only V is needed (not E separately).'},
+  {c:'for (int i = 0; i < n; i++)', e:'Outer loop to read cost matrix row by row.'},
+  {c:'  for (int j = 0; j < n; j++) {', e:'Inner loop for each column — fills cost[i][j] for every pair.'},
+  {c:'    scanf("%d", &cost[i][j]);', e:'Read edge weight between vertex i and j. 0 means no direct edge.'},
+  {c:'    if (cost[i][j] == 0) cost[i][j] = INF;', e:'CRITICAL: Replace 0 with INF (99999). If we leave 0, it would always be the "minimum" and get picked wrongly. Diagonal (self-loop) also becomes INF.'},
+  {c:'visited[0] = 1;', e:'Start from vertex 0. Mark it as part of the MST. The algorithm grows the tree from here.'},
+  {c:'for (int edge = 1; edge < n; edge++) {', e:'We need exactly V−1 edges for a spanning tree. This loop runs V−1 times, picking one edge per iteration.'},
+  {c:'  int min = INF, a, b;', e:'Reset minimum for this round. a and b will store the endpoints of the cheapest edge found in this iteration.'},
+  {c:'  for (int i = 0; i < n; i++)', e:'Scan all vertices i that are already IN the MST (visited[i] == 1).'},
+  {c:'    if (visited[i])', e:'Only consider vertices already in the tree as the "from" side.'},
+  {c:'      for (int j = 0; j < n; j++)', e:'For each visited vertex i, check all potential "to" vertices j.'},
+  {c:'        if (!visited[j] && cost[i][j] < min) {', e:'j must be UNVISITED (not in MST yet) AND the edge i→j must be cheaper than current min. Both conditions must hold.'},
+  {c:'          min = cost[i][j]; a = i; b = j;', e:'Found a cheaper edge! Update min and record endpoints a (from) and b (to).'},
+  {c:'        }', e:''},
+  {c:'  printf("%d --> %d = %d\\n", a, b, min);', e:'Print the chosen edge. a is the visited vertex, b is the new vertex being added to MST.'},
+  {c:'  mincost += min;', e:'Add this edge\'s weight to running total MST cost.'},
+  {c:'  visited[b] = 1;', e:'Mark b as visited — it\'s now part of the MST. Next iteration will consider edges FROM b as well.'},
+  {c:'printf("Minimum Cost = %d\\n", mincost);', e:'Print total MST weight after all V−1 edges are picked.'},
+];
+
+const cb = document.getElementById('codeblock');
+const ex = document.getElementById('explain');
+let activeIdx = -1;
+
+lines.forEach((l,i)=>{
+  if(!l.c.trim()) return;
+  const row = document.createElement('div');
+  row.className = 'code-line';
+  row.innerHTML = `<span class="ln">${i+1}</span><span class="ct">${l.c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+  if(l.e){
+    row.onclick = ()=>{
+      document.querySelectorAll('.code-line').forEach(r=>r.classList.remove('active'));
+      if(activeIdx===i){activeIdx=-1;ex.classList.remove('show');ex.textContent='';return;}
+      activeIdx=i;
+      row.classList.add('active');
+      ex.textContent=l.e;
+      ex.classList.add('show');
+    };
+  }
+  cb.appendChild(row);
+});
+
+const steps = [
+  {edge:'0 → 3',wt:5,visited:'0,3',why:'From visited={0}: edges are 0→1=10, 0→3=5. Min is 5. Add vertex 3.'},
+  {edge:'3 → 2',wt:4,visited:'0,2,3',why:'From visited={0,3}: check 0→1=10, 3→1=15, 3→2=4. Min is 4. Add vertex 2.'},
+  {edge:'0 → 1',wt:10,visited:'0,1,2,3',why:'From visited={0,2,3}: check 0→1=10, 3→1=15. Min is 10. Add vertex 1. Done!'},
+];
+
+const dr = document.getElementById('dryrun');
+steps.forEach(d=>{
+  const div = document.createElement('div');
+  div.className = 'dry-step';
+  div.innerHTML = `<span class="ds-edge">${d.edge} (wt ${d.wt})</span><span class="badge b-green">picked</span><span class="ds-why">${d.why} &nbsp;<strong>visited={${d.visited}}</strong></span>`;
+  dr.appendChild(div);
+});
+</script>

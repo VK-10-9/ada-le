@@ -1,0 +1,176 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.sec{margin-bottom:2rem}
+.sec-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+.code-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.code-line{display:flex;cursor:pointer;transition:background .1s}
+.code-line:hover{background:var(--color-background-tertiary)}
+.code-line.active{background:var(--color-background-info)}
+.ln{min-width:36px;text-align:right;padding:3px 10px 3px 0;font-size:12px;font-family:var(--font-mono);color:var(--color-text-tertiary);user-select:none;border-right:0.5px solid var(--color-border-tertiary)}
+.code-line.active .ln{color:var(--color-text-info)}
+.ct{padding:3px 12px;font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary);white-space:pre}
+.explain-box{margin-top:.75rem;padding:.75rem 1rem;background:var(--color-background-info);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-info);line-height:1.6;display:none}
+.explain-box.show{display:block}
+.hint{font-size:12px;color:var(--color-text-tertiary);margin-bottom:.5rem}
+.mat-wrap{overflow-x:auto;margin-bottom:.5rem}
+table.mat{border-collapse:collapse;font-size:12px;font-family:var(--font-mono)}
+table.mat td{padding:5px 12px;border:0.5px solid var(--color-border-tertiary);text-align:center;color:var(--color-text-primary)}
+table.mat td.hdr{color:var(--color-text-secondary);font-weight:500;background:var(--color-background-secondary)}
+table.mat td.inf{color:var(--color-text-tertiary)}
+table.mat td.hi{background:var(--color-background-success);color:var(--color-text-success);font-weight:500}
+table.mat td.pick{background:var(--color-background-warning);color:var(--color-text-warning);font-weight:500}
+.dry-step{padding:.65rem .85rem;border-radius:var(--border-radius-md);margin-bottom:6px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);font-size:13px}
+.dry-step .step-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.step-n{font-weight:500;color:var(--color-text-primary)}
+.step-d{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:20px;font-weight:500}
+.b-amber{background:var(--color-background-warning);color:var(--color-text-warning)}
+.b-green{background:var(--color-background-success);color:var(--color-text-success)}
+.viva-item{padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary);margin-bottom:8px}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cmp-card{padding:.75rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px}
+.cmp-card .label{font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
+.cmp-card .detail{color:var(--color-text-secondary);line-height:1.6}
+</style>
+
+<h2 class="sr-only">Dijkstra's algorithm — full line-by-line explanation with dry run</h2>
+
+<div style="padding:1rem 0">
+
+<div class="sec">
+  <div class="sec-title">Core idea in one line</div>
+  <div style="font-size:14px;color:var(--color-text-primary);line-height:1.6;padding:.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">
+    From a source, greedily pick the closest unvisited vertex, mark it done, then relax (update) distances to all its unvisited neighbors. Repeat V−1 times.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Floyd vs Dijkstra — key diff</div>
+  <div class="compare-grid">
+    <div class="cmp-card">
+      <div class="label">Floyd's (Lab 3a)</div>
+      <div class="detail">All-pairs shortest path. Every vertex to every other vertex. O(n³). Works with negative weights (no negative cycles).</div>
+    </div>
+    <div class="cmp-card">
+      <div class="label">Dijkstra's (Lab 4)</div>
+      <div class="detail">Single-source shortest path. One source → all others. O(V²). Does NOT work with negative weights.</div>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Input — cost matrix (4 vertices, source = 0)</div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">0 in matrix = no edge → stored as INF. Diagonal = self = 0.</div>
+  <div class="mat-wrap">
+  <table class="mat">
+    <tr><td class="hdr"></td><td class="hdr">0</td><td class="hdr">1</td><td class="hdr">2</td><td class="hdr">3</td></tr>
+    <tr><td class="hdr">0</td><td>0</td><td>2</td><td class="inf">∞</td><td>1</td></tr>
+    <tr><td class="hdr">1</td><td>2</td><td>0</td><td>3</td><td class="inf">∞</td></tr>
+    <tr><td class="hdr">2</td><td class="inf">∞</td><td>3</td><td>0</td><td class="inf">∞</td></tr>
+    <tr><td class="hdr">3</td><td>1</td><td class="inf">∞</td><td>4</td><td>0</td></tr>
+  </table>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Code — tap any line</div>
+  <div class="hint">Tap a line → explanation below</div>
+  <div class="code-block" id="codeblock"></div>
+  <div class="explain-box" id="explain"></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Dry run — source = 0</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:.5rem">Initial dist[]: dist[0]=0, dist[1]=2, dist[2]=∞, dist[3]=1 (copied from source row)</div>
+  <div id="dryrun"></div>
+  <div style="margin-top:10px;padding:.65rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-primary)">
+    Final: 0→1 = <strong>2</strong>, 0→2 = <strong>5</strong>, 0→3 = <strong>1</strong>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">dist[] state after each step</div>
+  <div class="mat-wrap">
+  <table class="mat">
+    <tr><td class="hdr">Step</td><td class="hdr">Picked</td><td class="hdr">dist[0]</td><td class="hdr">dist[1]</td><td class="hdr">dist[2]</td><td class="hdr">dist[3]</td></tr>
+    <tr><td class="hdr">Init</td><td class="hdr">src=0</td><td>0</td><td>2</td><td class="inf">∞</td><td>1</td></tr>
+    <tr><td class="hdr">1</td><td class="pick">u=3</td><td>0</td><td>2</td><td class="hi">5</td><td>1</td></tr>
+    <tr><td class="hdr">2</td><td class="pick">u=1</td><td>0</td><td>2</td><td class="hi">5</td><td>1</td></tr>
+    <tr><td class="hdr">3</td><td class="pick">u=2</td><td>0</td><td>2</td><td>5</td><td>1</td></tr>
+  </table>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-top:6px">Green = updated in that step. Orange = vertex picked as minimum that round.</div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Viva questions</div>
+  <div class="viva-item"><span style="font-weight:500">Why doesn't Dijkstra work with negative weights?</span> — Once a vertex is marked visited, its distance is locked. A negative edge discovered later could give a shorter path, but we've already finalized it. Use Bellman-Ford for negative weights.</div>
+  <div class="viva-item"><span style="font-weight:500">Why dist[src]=0 separately after init?</span> — We copy the source row into dist[], which sets dist[src][src] = 0 (or INF after conversion). Setting dist[src]=0 explicitly ensures source distance is always 0.</div>
+  <div class="viva-item"><span style="font-weight:500">Why loop runs n−2 times (c &lt; n−1)?</span> — Source is already visited. We need to finalize n−1 more vertices. But inner loop handles last vertex implicitly, so n−2 iterations suffice.</div>
+  <div class="viva-item"><span style="font-weight:500">Time complexity?</span> — Two nested loops (pick min + relax neighbors) → <strong>O(V²)</strong>. Same as Prim's — both use adjacency matrix + greedy vertex picking.</div>
+  <div class="viva-item"><span style="font-weight:500">Dijkstra vs Prim — they look similar?</span> — Yes, same structure. Prim picks minimum edge weight to grow MST. Dijkstra picks minimum cumulative distance from source. Different goal, same skeleton.</div>
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button onclick="sendPrompt('Give me a fresh Dijkstra dry run with 5 vertices, show dist[] after each step')">New dry run ↗</button>
+  <button onclick="sendPrompt('Now decode Lab 5 Topological Sort line by line with full depth')">Next: Lab 5 — Topological Sort ↗</button>
+</div>
+
+</div>
+
+<script>
+const lines = [
+  {c:'int n, cost[100][100], dist[100], visited[100]={0}, src;', e:'cost[][] = input adjacency matrix. dist[] = shortest distances from source (what we compute). visited[] = tracks finalized vertices. src = source vertex entered by user.'},
+  {c:'for (int i=0; i<n; i++)', e:'Read cost matrix row by row.'},
+  {c:'  for (int j=0; j<n; j++) {', e:'Read each cell.'},
+  {c:'    scanf("%d", &cost[i][j]);', e:'Read the edge weight.'},
+  {c:'    if (i!=j && cost[i][j]==0) cost[i][j]=INF;', e:'IMPORTANT: 0 means no edge (except diagonal i==j which stays 0). Replace with INF so it\'s never picked as a path. i!=j check preserves the self-distance of 0.'},
+  {c:'for (int i=0; i<n; i++) dist[i]=cost[src][i];', e:'Initialize dist[]: copy the entire source row. dist[i] = direct cost from source to i. If no direct edge, it\'s already INF. This is our starting estimate.'},
+  {c:'dist[src]=0; visited[src]=1;', e:'Source distance to itself = 0. Mark source as visited — it\'s already finalized. We never re-process it.'},
+  {c:'for (int c=1; c<n-1; c++) {', e:'Main loop runs V−2 times (source already done, last vertex is implicit). Each iteration finalizes one more vertex.'},
+  {c:'  int min=INF, u;', e:'Reset min for this round. u will hold the index of the closest unvisited vertex found.'},
+  {c:'  for (int i=0; i<n; i++)', e:'Scan all vertices to find the unvisited one with minimum dist[].'},
+  {c:'    if (!visited[i] && dist[i]<min) { min=dist[i]; u=i; }', e:'If vertex i is unvisited AND its current distance is less than min → update. After this loop, u is the closest unvisited vertex. This is the greedy pick.'},
+  {c:'  visited[u]=1;', e:'Lock in vertex u — its shortest distance is now final. Greedy guarantee: no future path can be shorter (assuming non-negative weights).'},
+  {c:'  for (int i=0; i<n; i++)', e:'RELAXATION: now that u is finalized, check if going through u improves distance to any of u\'s unvisited neighbors.'},
+  {c:'    if (!visited[i] && min+cost[u][i]<dist[i])', e:'Two conditions: i must be unvisited AND path via u (dist[u] + edge u→i) must be shorter than current dist[i].'},
+  {c:'      dist[i]=min+cost[u][i];', e:'Update dist[i] — we found a shorter path to i by going through u. min here = dist[u] (already finalized).'},
+  {c:'printf("%d --> %d = %d\\n", src, i, dist[i]);', e:'Print final shortest distance from source to each other vertex. These are guaranteed optimal after the loop.'},
+];
+
+const cb = document.getElementById('codeblock');
+const ex = document.getElementById('explain');
+let activeIdx = -1;
+lines.forEach((l,i)=>{
+  if(!l.c.trim()) return;
+  const row = document.createElement('div');
+  row.className = 'code-line';
+  row.innerHTML = `<span class="ln">${i+1}</span><span class="ct">${l.c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+  if(l.e){
+    row.onclick = ()=>{
+      document.querySelectorAll('.code-line').forEach(r=>r.classList.remove('active'));
+      if(activeIdx===i){activeIdx=-1;ex.classList.remove('show');ex.textContent='';return;}
+      activeIdx=i;
+      row.classList.add('active');
+      ex.textContent=l.e;
+      ex.classList.add('show');
+    };
+  }
+  cb.appendChild(row);
+});
+
+const steps = [
+  {n:'Step 1',pick:'Pick u=3 (dist=1, min unvisited)',badge:'b-amber',d:'Relax neighbors of 3: dist[2] = min(∞, 1+4) = 5 ✓ updated. dist[1] unchanged (1+∞ > 2). visited={0,3}'},
+  {n:'Step 2',pick:'Pick u=1 (dist=2, min unvisited)',badge:'b-amber',d:'Relax neighbors of 1: dist[2] = min(5, 2+3) = 5, no change. visited={0,1,3}'},
+  {n:'Step 3',pick:'Pick u=2 (dist=5, min unvisited)',badge:'b-amber',d:'No unvisited neighbors to relax. All vertices finalized. visited={0,1,2,3}'},
+];
+
+const dr = document.getElementById('dryrun');
+steps.forEach(d=>{
+  const div = document.createElement('div');
+  div.className = 'dry-step';
+  div.innerHTML = `<div class="step-head"><span class="step-n">${d.n}</span><span class="badge ${d.badge}">${d.pick}</span></div><div class="step-d">${d.d}</div>`;
+  dr.appendChild(div);
+});
+</script>

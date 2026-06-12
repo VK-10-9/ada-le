@@ -1,0 +1,176 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.sec{margin-bottom:2rem}
+.sec-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+.code-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.code-line{display:flex;cursor:pointer;transition:background .1s}
+.code-line:hover{background:var(--color-background-tertiary)}
+.code-line.active{background:var(--color-background-info)}
+.ln{min-width:36px;text-align:right;padding:3px 10px 3px 0;font-size:12px;font-family:var(--font-mono);color:var(--color-text-tertiary);user-select:none;border-right:0.5px solid var(--color-border-tertiary)}
+.code-line.active .ln{color:var(--color-text-info)}
+.ct{padding:3px 12px;font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary);white-space:pre}
+.explain-box{margin-top:.75rem;padding:.75rem 1rem;background:var(--color-background-info);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-info);line-height:1.6;display:none}
+.explain-box.show{display:block}
+.hint{font-size:12px;color:var(--color-text-tertiary);margin-bottom:.5rem}
+.dry-step{padding:.65rem .85rem;border-radius:var(--border-radius-md);margin-bottom:6px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);font-size:13px}
+.dry-step .step-head{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.step-n{font-weight:500;color:var(--color-text-primary)}
+.step-d{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.badge{display:inline-block;font-size:11px;padding:1px 8px;border-radius:20px;font-weight:500}
+.b-amber{background:var(--color-background-warning);color:var(--color-text-warning)}
+.b-green{background:var(--color-background-success);color:var(--color-text-success)}
+.b-red{background:var(--color-background-danger);color:var(--color-text-danger)}
+.viva-item{padding:.6rem 1rem;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);font-size:13px;color:var(--color-text-primary);margin-bottom:8px}
+.mat-wrap{overflow-x:auto;margin-bottom:.5rem}
+table.mat{border-collapse:collapse;font-size:12px;font-family:var(--font-mono)}
+table.mat td{padding:5px 12px;border:0.5px solid var(--color-border-tertiary);text-align:center;color:var(--color-text-primary)}
+table.mat td.hdr{color:var(--color-text-secondary);font-weight:500;background:var(--color-background-secondary)}
+table.mat td.hi{background:var(--color-background-success);color:var(--color-text-success);font-weight:500}
+table.mat td.zero{color:var(--color-text-tertiary)}
+.indeg-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.indeg-cell{padding:4px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);font-size:12px;font-family:var(--font-mono);background:var(--color-background-secondary);color:var(--color-text-primary)}
+.indeg-cell.zero{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+</style>
+
+<h2 class="sr-only">Topological Sort using Kahn's algorithm — full line-by-line explanation with dry run</h2>
+
+<div style="padding:1rem 0">
+
+<div class="sec">
+  <div class="sec-title">Core idea in one line</div>
+  <div style="font-size:14px;color:var(--color-text-primary);line-height:1.6;padding:.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary)">
+    Find all vertices with no incoming edges (indegree=0), process them first, reduce neighbors' indegree. Repeat. If all vertices aren't processed → cycle exists → topological sort impossible.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">What is indegree?</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.7;padding:.75rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md)">
+    Indegree of a vertex = number of edges coming INTO it.<br>
+    Vertex with indegree 0 = no prerequisites = can be scheduled first.<br>
+    Example: In a course prereq graph, "Maths" (no prereqs) has indegree 0. "ADA" (needs Maths) has indegree ≥ 1.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Sample graph — 4 vertices</div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">Edges: 0→1, 0→2, 1→3, 2→3. Adjacency matrix:</div>
+  <div class="mat-wrap">
+  <table class="mat">
+    <tr><td class="hdr"></td><td class="hdr">0</td><td class="hdr">1</td><td class="hdr">2</td><td class="hdr">3</td></tr>
+    <tr><td class="hdr">0</td><td class="zero">0</td><td>1</td><td>1</td><td class="zero">0</td></tr>
+    <tr><td class="hdr">1</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td>1</td></tr>
+    <tr><td class="hdr">2</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td>1</td></tr>
+    <tr><td class="hdr">3</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+  </table>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin:.75rem 0 .4rem">Indegrees computed from matrix (count of 1s in each column):</div>
+  <div class="indeg-row">
+    <div class="indeg-cell zero">indeg[0]=0 ✓</div>
+    <div class="indeg-cell">indeg[1]=1</div>
+    <div class="indeg-cell">indeg[2]=1</div>
+    <div class="indeg-cell">indeg[3]=2</div>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-secondary)">Green = indegree 0 → goes into queue first.</div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Code — tap any line</div>
+  <div class="hint">Tap a line → explanation below</div>
+  <div class="code-block" id="codeblock"></div>
+  <div class="explain-box" id="explain"></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Dry run — step by step</div>
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:.75rem">Queue starts with vertex 0 (only indegree-0 vertex). Output built left to right.</div>
+  <div id="dryrun"></div>
+  <div style="margin-top:10px;padding:.65rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-primary)">
+    Topological Order: <strong>0 → 1 → 2 → 3</strong> &nbsp;|&nbsp; count=4=n ✓ No cycle.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Cycle detection — how it works</div>
+  <div style="padding:.75rem 1rem;background:var(--color-background-danger);border-radius:var(--border-radius-md);font-size:13px;color:var(--color-text-danger);line-height:1.7">
+    If a cycle exists (e.g. 1→2→3→1), those vertices never reach indegree 0 — they never enter the queue — they never get counted.<br>
+    After the loop: <code style="font-size:12px">if (count != n)</code> → some vertices were never processed → cycle detected → print error.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Viva questions</div>
+  <div class="viva-item"><span style="font-weight:500">What is topological ordering?</span> — A linear ordering of vertices such that for every directed edge u→v, u appears before v. Only possible on a DAG (Directed Acyclic Graph).</div>
+  <div class="viva-item"><span style="font-weight:500">Why does Kahn's use a queue (BFS)?</span> — All indegree-0 vertices are equally "ready" to be processed. Queue gives FIFO order — process them level by level, like BFS traversal.</div>
+  <div class="viva-item"><span style="font-weight:500">Is topological order unique?</span> — No. Multiple valid orderings can exist if multiple vertices have indegree 0 at the same time. E.g. both 0→1→3 and 0→2→3 are valid.</div>
+  <div class="viva-item"><span style="font-weight:500">Time complexity?</span> — <strong>O(V+E)</strong>. Every vertex is enqueued/dequeued once (O(V)), every edge is processed once when reducing indegree (O(E)).</div>
+  <div class="viva-item"><span style="font-weight:500">Why not possible on undirected graphs?</span> — Topological sort requires direction — it defines "what comes before what." Undirected edges have no such ordering.</div>
+  <div class="viva-item"><span style="font-weight:500">Real-world use?</span> — Build systems (compile order), course prerequisites, task scheduling, package dependency resolution.</div>
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button onclick="sendPrompt('Give me a topological sort dry run on a graph with a cycle, show how cycle is detected')">Cycle detection dry run ↗</button>
+  <button onclick="sendPrompt('Now decode Lab 6 0/1 Knapsack DP line by line with full depth')">Next: Lab 6 — 0/1 Knapsack ↗</button>
+</div>
+
+</div>
+
+<script>
+const lines = [
+  {c:'int n, adj[100][100], indeg[100];', e:'n = number of vertices. adj[][] = adjacency matrix (global). indeg[] = indegree of each vertex — counts how many edges come INTO each vertex.'},
+  {c:'void topologicalSort() {', e:'All logic is in this function. Called from main after reading input.'},
+  {c:'  int queue[100], front=0, rear=0, count=0;', e:'Manual queue using an array. front = index to dequeue from, rear = index to enqueue at. count = number of vertices processed (used for cycle detection).'},
+  {c:'  for (int i=0; i<n; i++)', e:'First pass: compute indegrees by scanning the entire adjacency matrix.'},
+  {c:'    for (int j=0; j<n; j++)', e:'For each cell adj[i][j]: if it\'s 1, vertex j has an incoming edge from i.'},
+  {c:'      if (adj[i][j]) indeg[j]++;', e:'If edge i→j exists, increment indegree of j. After both loops, indeg[j] = total edges coming into j.'},
+  {c:'  for (int i=0; i<n; i++)', e:'Second pass: find all vertices with indegree 0 — these have no prerequisites, they can go first.'},
+  {c:'    if (indeg[i]==0) queue[rear++]=i;', e:'Enqueue every indegree-0 vertex. rear++ advances the queue tail. Multiple vertices can have indegree 0 — all get queued.'},
+  {c:'  while (front < rear) {', e:'Process queue until empty. front < rear means there are still vertices to process. This is the BFS loop.'},
+  {c:'    int v = queue[front++];', e:'Dequeue: take vertex v from the front. front++ advances the head. v is the next vertex to output.'},
+  {c:'    printf("%d ", v);', e:'Print v — it\'s next in topological order. All its prerequisites have already been processed.'},
+  {c:'    count++;', e:'Track how many vertices we\'ve processed. If count < n at the end → some vertices were never dequeued → cycle.'},
+  {c:'    for (int i=0; i<n; i++)', e:'For every neighbor of v: since v is now "done", its outgoing edges no longer block anyone.'},
+  {c:'      if (adj[v][i] && --indeg[i]==0)', e:'If edge v→i exists, decrement indeg[i]. If it hits 0 → all of i\'s prerequisites are done → i is now ready → enqueue it.'},
+  {c:'        queue[rear++]=i;', e:'Enqueue i. It will be processed in a future iteration of the while loop.'},
+  {c:'  if (count != n)', e:'CYCLE DETECTION: if we processed fewer than n vertices, some vertices were stuck (indegree never reached 0) because of a cycle.'},
+  {c:'    printf("\\nGraph has a cycle...");', e:'Topological sort is impossible on a graph with a cycle. A cycle means A depends on B which depends on A — no valid ordering exists.'},
+];
+
+const cb = document.getElementById('codeblock');
+const ex = document.getElementById('explain');
+let activeIdx = -1;
+lines.forEach((l,i)=>{
+  if(!l.c.trim()) return;
+  const row = document.createElement('div');
+  row.className = 'code-line';
+  row.innerHTML = `<span class="ln">${i+1}</span><span class="ct">${l.c.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
+  if(l.e){
+    row.onclick=()=>{
+      document.querySelectorAll('.code-line').forEach(r=>r.classList.remove('active'));
+      if(activeIdx===i){activeIdx=-1;ex.classList.remove('show');ex.textContent='';return;}
+      activeIdx=i;
+      row.classList.add('active');
+      ex.textContent=l.e;
+      ex.classList.add('show');
+    };
+  }
+  cb.appendChild(row);
+});
+
+const steps = [
+  {n:'Init',badge:'b-amber',pick:'Queue=[0]',d:'indeg: [0,1,1,2]. Only vertex 0 has indegree 0 → enqueue. front=0, rear=1.'},
+  {n:'Step 1',badge:'b-green',pick:'Dequeue 0 → output: 0',d:'Process neighbors of 0: adj[0][1]=1 → indeg[1]=0 → enqueue 1. adj[0][2]=1 → indeg[2]=0 → enqueue 2. Queue=[1,2]. count=1.'},
+  {n:'Step 2',badge:'b-green',pick:'Dequeue 1 → output: 0 1',d:'Process neighbors of 1: adj[1][3]=1 → indeg[3]=2-1=1 → not 0, don\'t enqueue. Queue=[2]. count=2.'},
+  {n:'Step 3',badge:'b-green',pick:'Dequeue 2 → output: 0 1 2',d:'Process neighbors of 2: adj[2][3]=1 → indeg[3]=1-1=0 → enqueue 3. Queue=[3]. count=3.'},
+  {n:'Step 4',badge:'b-green',pick:'Dequeue 3 → output: 0 1 2 3',d:'No neighbors. Queue empty. count=4=n ✓. Done!'},
+];
+
+const dr = document.getElementById('dryrun');
+steps.forEach(d=>{
+  const div = document.createElement('div');
+  div.className = 'dry-step';
+  div.innerHTML = `<div class="step-head"><span class="step-n">${d.n}</span><span class="badge ${d.badge}">${d.pick}</span></div><div class="step-d">${d.d}</div>`;
+  dr.appendChild(div);
+});
+</script>
